@@ -1,14 +1,8 @@
-CC = gcc
-CFLAGS = -g -O0 -std=c99
-
-miniL: miniL-lex.o
-	$(CC) $< -o $@ -lfl
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-miniL-lex.c: miniL.lex
-	flex -o $@ $< 
-
+parse: mini_l.lex mini_l.y
+	bison -v -d --file-prefix=y mini_l.y
+	flex mini_l.lex
+	gcc -o parser y.tab.c lex.yy.c -lfl
+test:
+	cat mytest.min | parser
 clean:
-	rm -f *.o miniL-lex.c miniL
+	rm -f lex.yy.c y.tab.* y.output *.o parser
